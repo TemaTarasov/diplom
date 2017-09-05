@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 import { Icon } from 'antd';
 
-import Header from '../../Component/Header';
+import { Header } from '../../Components';
 
 export class Home extends Component {
   /**

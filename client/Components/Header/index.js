@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Row, Col } from 'antd';
 
-export default class extends React.Component {
+export class Header extends React.Component {
   /**
    * @param {Object} props
    */
