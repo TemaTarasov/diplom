@@ -20,7 +20,6 @@ export class Home extends Component {
       <div>
         <Header>
           <Icon type="api" className="header-logo" />
-          <div />
         </Header>
       </div>
     );

@@ -14,9 +14,13 @@ export class Header extends React.Component {
     return (
       <Row type="flex" justify="space-between" gutter={8}>
         {
-          this.props.children.map((item, i) => 
-            <Col key={i}>{item}</Col>
-          )
+          Array.isArray(this.props.children)
+          ? this.props.children.map((item, i) =>
+              <Col key={i}>{item}</Col>
+            )
+          : <Col>
+              {this.props.children}
+            </Col>
         }
       </Row>
     )
