@@ -1,27 +1,50 @@
 import React from 'react';
+import Component from '../../Component';
 
-import { Row, Col } from 'antd';
+import { Link } from 'react-router-dom';
 
-export class Header extends React.Component {
+import { Row, Col, Menu, Icon } from 'antd';
+
+export class Header extends Component {
   /**
    * @param {Object} props
    */
   constructor(props) {
     super(props);
+
+    this.state = {
+      menu: props.menu || ''
+    }
+
+    this.bindMethods([
+      'handleClickMenu'
+    ]);
+  }
+
+  /**
+   * @param {Event} event
+   */
+  handleClickMenu(event) {
+    this.setState({
+      menu: event.key
+    });
   }
 
   render() {
     return (
-      <Row type="flex" justify="space-between" gutter={8}>
-        {
-          Array.isArray(this.props.children)
-          ? this.props.children.map((item, i) =>
-              <Col key={i}>{item}</Col>
-            )
-          : <Col>
-              {this.props.children}
-            </Col>
-        }
+      <Row type="flex" justify="space-between" gutter={8} className="header">
+        <Col>
+          <Icon type="api" className="header-logo" />
+        </Col>
+        <Col>
+          <Menu onClick={this.handleClickMenu} selectedKeys={[this.state.menu]} mode="horizontal">
+            <Menu.Item key="home">
+              <Link to="/">
+                <Icon type="home" /> Главная
+              </Link>
+            </Menu.Item>
+          </Menu>
+        </Col>
       </Row>
     )
   }
