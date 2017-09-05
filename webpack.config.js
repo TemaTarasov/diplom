@@ -13,7 +13,7 @@ module.exports = {
 
   watch: dev,
   watchOptions: {
-    aggregateTimeout: 1000
+    aggregateTimeout: 100
   },
 
   devtool: dev ? '': 'inline-source-map',
