@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import { Home } from './Controllers/Home';
 
-const UserController = props => {
+const HomeController = props => {
   return <Home {...props} menu="home" />
 };
 
@@ -20,7 +20,7 @@ export default class extends React.Component {
     return (
       <Router>
         <Switch>
-          <Route path="/" component={UserController} />
+          <Route path="/" component={HomeController} />
         </Switch>
       </Router>
     );
