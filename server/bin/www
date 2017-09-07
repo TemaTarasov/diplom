@@ -1,6 +1,8 @@
-import app from '../server';
+#!/usr/bin/env node
+
+import app from '../index';
 import http from 'http';
-import serverConfig from '../server/config/server.json';
+import serverConfig from '../config/server.json';
 
 const debug = require('debug')('diplom:server');
 

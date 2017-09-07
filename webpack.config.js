@@ -18,7 +18,10 @@ module.exports = {
 
   devtool: dev ? '': 'inline-source-map',
 
-  plugins: dev ? []: [
+  plugins: dev ? [
+    new webpack.optimize.ModuleConcatenationPlugin()
+  ]: [
+    new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
         warnings: false,
