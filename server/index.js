@@ -5,10 +5,22 @@ import logger from 'morgan';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 
+import mongoose from 'mongoose';
+import mongoConfig from './config/mongo.json';
+
+mongoose.connect(`mongodb://127.0.0.1:${mongoConfig.port}/${mongoConfig.db}`, {
+  useMongoClient: true
+});
+
 /**
  * Routes
  */
 import mainRoute from './routes';
+
+/**
+ * Api routes
+ */
+import userRoute from './routes/Api/v1/users';
 
 const app = express();
 
@@ -24,6 +36,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '/../public')));
 
+/**
+ * Api routers
+ */
+app.use('/api/v1/users', userRoute);
+
+/**
+ * Basic route
+ */
 app.use('*', mainRoute);
 
 export default app;
