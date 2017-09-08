@@ -4,6 +4,10 @@ import Controller from './index';
 import User from '../Models/User';
 
 class UserController extends Controller {
+  constructor() {
+    super();
+  }
+
   /**
    * @param {any} req
    * @param {any} res
@@ -17,7 +21,25 @@ class UserController extends Controller {
    * @param {any} res
    */
   store(req, res) {
-    console.log('store');
+    const { login, email, password } = req.body;
+
+    if (this.validate([
+      { value: login },
+      { type: 'email', value: email },
+      { value: password }
+    ])) {
+      User.new({
+        login: login,
+        email: email,
+        password: password
+      }, (err, user) => {
+        if (err) return res.json({ err: err.code, msg: err.errmsg });
+
+        return res.json(user);
+      });
+    } else {
+      return res.end();
+    }
   }
 
   /**

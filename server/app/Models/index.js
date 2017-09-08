@@ -46,7 +46,7 @@ export default class {
    * @param {Function} callback
    */
   update(id, data, callback = () => {}) {
-    this.schema.findByIdAndUpdate(id, { $set: data }, { new: true }, callback);
+    this.schema.findByIdAndUpdate(id, { $set: data }, { upsert: true }, callback);
   }
 
   /**

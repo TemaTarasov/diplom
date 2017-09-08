@@ -4,7 +4,7 @@ import UserController from '../../../app/Controllers/UserController';
 const router = express.Router();
 
 export default router
-  .get('/', UserController.index)
-  .post('/store', UserController.store)
-  .put('/:id', UserController.update)
-  .delete('/:id', UserController.destroy);
+  .get('/', UserController.index.bind(UserController))
+  .post('/store', UserController.store.bind(UserController))
+  .put('/:id', UserController.update.bind(UserController))
+  .delete('/:id', UserController.destroy.bind(UserController));

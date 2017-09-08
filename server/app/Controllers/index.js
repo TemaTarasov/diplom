@@ -11,6 +11,30 @@ export default class {
   }
 
   /**
+   * @param  {Array} array
+   * @return {Boolean}
+   */
+  validate(array) {
+    return array.reduce((acc, item) => {
+      const email = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      let bool;
+
+      switch (item.type) {
+        case 'email':
+          bool = email.test(item.value);
+          break;
+        default:
+          bool = item.value !== '';
+          break;
+      }
+
+      if (acc) acc = bool;
+
+      return acc;
+    }, true);
+  }
+
+  /**
    * @param {Array} array
    * @param {Function} callback
    */
