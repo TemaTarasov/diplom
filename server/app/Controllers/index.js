@@ -1,13 +1,25 @@
 export default class {
   /**
+   * @param  {String} email
+   * @return {Boolean}
+   */
+  email(email) {
+    const regexp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    return regexp.test(email);
+  }
+
+  /**
    * @param  {String} value
    * @param  {Boolean} forse
    * @return {String}
    */
   trim(value, forse = false) {
-    const tmp = value.trim().split(' ').filter(x => x !== '');
+    if (value) {
+      const tmp = value.trim().split(' ').filter(x => x !== '');
 
-    return forse ? tmp.join(''): tmp.join(' ');
+      return forse ? tmp.join(''): tmp.join(' ');
+    }
   }
 
   /**
@@ -16,15 +28,14 @@ export default class {
    */
   validate(array) {
     return array.reduce((acc, item) => {
-      const email = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       let bool;
 
       switch (item.type) {
         case 'email':
-          bool = email.test(item.value);
+          bool = this.email(item.value);
           break;
         default:
-          bool = item.value !== '';
+          bool = item.value && item.value !== '';
           break;
       }
 

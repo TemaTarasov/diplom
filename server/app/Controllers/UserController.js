@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import Controller from './index';
 
+import hash from 'password-hash';
+
 import User from '../Models/User';
 
 class UserController extends Controller {
@@ -9,19 +11,25 @@ class UserController extends Controller {
   }
 
   /**
-   * @param {any} req
-   * @param {any} res
+   * @param {Object} req
+   * @param {Object} res
    */
   index(req, res) {
-    console.log('index');
+    User.all((err, users) => {
+      if (err) res.json(err);
+
+      else res.json(users);
+    });
   }
 
   /**
-   * @param {any} req
-   * @param {any} res
+   * @param {Object} body
+   * @param {Object} res
    */
-  store(req, res) {
-    const { login, email, password } = req.body;
+  store({ body }, res) {
+    const login = this.trim(body.login, true);
+    const email = this.trim(body.email, true);
+    const password = this.trim(body.password, true);
 
     if (this.validate([
       { value: login },
@@ -31,31 +39,55 @@ class UserController extends Controller {
       User.new({
         login: login,
         email: email,
-        password: password
+        password: hash.generate(password)
       }, (err, user) => {
-        if (err) return res.json({ err: err.code, msg: err.errmsg });
+        if (err) res.json({ err: err.code, msg: err.errmsg });
 
-        return res.json(user);
+        // TODO: jwt auth, and session start.
+        else res.json(user);
       });
     } else {
-      return res.end();
+      res.json({ err: 'validation error!' });
     }
   }
 
   /**
-   * @param {any} req
-   * @param {any} res
+   * @param {Object} req
+   * @param {Object} res
    */
   update(req, res) {
-    console.log('update');
+    const id = req.params.id,
+          login = this.trim(req.body.login, true),
+          email = this.trim(req.body.email, true),
+          password = this.trim(req.body.password, true),
+          object = {
+            login: this.validate([{ value: login }]) ? login: null,
+            email: this.email(email) ? email: null,
+            password: this.validate([{ value: password }]) ? hash.generate(password): null
+          };
+
+    const update = Object.keys(object).reduce((acc, key) => {
+      if (object[key]) acc[key] = object[key];
+
+      return acc;
+    }, {});
+
+    User.update(id, update, (err, user) => {
+      res.json({
+        err: { err },
+        user: { user }
+      });
+    });
   }
 
   /**
-   * @param {any} req
-   * @param {any} res
+   * @param {Object} params
+   * @param {Object} res
    */
-  destroy(req, res) {
-    console.log('destroy');
+  destroy({ params }, res) {
+    User.destroy(params.id);
+
+    res.status(200).end();
   }
 }
 
