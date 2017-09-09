@@ -60,23 +60,22 @@ class UserController extends Controller {
           login = this.trim(req.body.login, true),
           email = this.trim(req.body.email, true),
           password = this.trim(req.body.password, true),
-          object = {
-            login: this.validate([{ value: login }]) ? login: null,
-            email: this.email(email) ? email: null,
-            password: this.validate([{ value: password }]) ? hash.generate(password): null
-          };
+          update = {};
 
-    const update = Object.keys(object).reduce((acc, key) => {
-      if (object[key]) acc[key] = object[key];
+    if (this.validate([{ value: login }])) {
+      update.login = login;
+    }
 
-      return acc;
-    }, {});
+    if (this.email(email)) {
+      update.email = email;
+    }
+
+    if (this.validate([{ value: password }])) {
+      update.password = hash.generate(password);
+    }
 
     User.update(id, update, (err, user) => {
-      res.json({
-        err: { err },
-        user: { user }
-      });
+      res.status(200).end();
     });
   }
 
