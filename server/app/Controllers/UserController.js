@@ -1,9 +1,14 @@
 import mongoose from 'mongoose';
+import hash from 'password-hash';
+import jwt from 'jsonwebtoken';
+import session from 'express-session';
+
 import Controller from './index';
 
-import hash from 'password-hash';
-
+import Auth from '../Middleware/Auth';
 import User from '../Models/User';
+
+import tokenConfig from '../../config/token.json';
 
 class UserController extends Controller {
   constructor() {
@@ -26,7 +31,7 @@ class UserController extends Controller {
    * @param {Object} body
    * @param {Object} res
    */
-  store({ body }, res) {
+  signUp({ body }, res) {
     const login = this.trim(body.login, true);
     const email = this.trim(body.email, true);
     const password = this.trim(body.password, true);
@@ -43,8 +48,20 @@ class UserController extends Controller {
       }, (err, user) => {
         if (err) res.json({ err: err.code, msg: err.errmsg });
 
-        // TODO: jwt auth, and session start.
-        else res.json(user);
+        else {
+          const setup = { id: user._id, login: user.login, email: user.email },
+                token = jwt.sign(setup, tokenConfig.salt,  { expiresIn: '1d' });
+
+          session.auth = {
+            ...session.auth,
+            auth: true,
+            token: token,
+            id: user._id,
+            userName: user.login
+          };
+
+          res.json({ token: token });
+        }
       });
     } else {
       res.json({ err: 'validation error!' });
@@ -63,6 +80,8 @@ class UserController extends Controller {
           update = {};
 
     if (this.validate([{ value: login }])) {
+      session.auth.userName = login;
+
       update.login = login;
     }
 
@@ -77,6 +96,64 @@ class UserController extends Controller {
     User.update(id, update, (err, user) => {
       res.status(200).end();
     });
+  }
+
+  /**
+   * @param {Object} req
+   * @param {Object} res
+   */
+  signIn(req, res) {
+    const login = this.trim(req.body.login, true),
+          email = this.trim(req.body.email, true),
+          password = this.trim(req.body.password, true);
+
+    if (!this.validate([{ value: password }])) {
+      res.json({ err: 'validation error!' });
+    } else {
+      if (this.validate([{ value: login }])) {
+        Auth.attempt({ login: login, password: password }, user => {
+          if (user.err) return res.json(user.err);
+
+          session.auth = {
+            ...session.auth,
+            auth: true,
+            token: user.token,
+            id: user._id,
+            userName: user.login
+          };
+
+          res.json({
+            token: user.token
+          });
+        });
+      } else if (this.email(email)) {
+        Auth.attempt({ email: email, password: password }, user => {
+          if (user.err) return res.json(user.err);
+
+          session.auth = {
+            ...session.auth,
+            auth: true,
+            token: user.token,
+            id: user._id,
+            userName: user.login
+          };
+
+          res.json({
+            token: user.token
+          });
+        });
+      } else {
+        res.json({ err: 'validation error!' });
+      }
+    }
+  }
+
+  /**
+   * @param {Object} req
+   * @param {Object} res
+   */
+  signOut(req, res) {
+
   }
 
   /**

@@ -1,0 +1,7 @@
+{
+  "port": "",
+  "session": {
+    "secret": "",
+    "cookie": false
+  }
+}

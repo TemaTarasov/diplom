@@ -5,6 +5,9 @@ import logger from 'morgan';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 
+import session from 'express-session';
+import serverConfig from '../server/config/server.json';
+
 import mongoose from 'mongoose';
 import mongoConfig from './config/mongo.json';
 
@@ -16,6 +19,7 @@ mongoose.connect(`mongodb://127.0.0.1:${mongoConfig.port}/${mongoConfig.db}`, {
  * Routes
  */
 import mainRoute from './routes';
+import signRoute from './routes/sign';
 
 /**
  * Api routes
@@ -23,6 +27,20 @@ import mainRoute from './routes';
 import userRoute from './routes/Api/v1/users';
 
 const app = express();
+
+app.use(session({
+  secret: serverConfig.session.secret,
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: serverConfig.session.cookie }
+}));
+
+session.auth = {
+  auth: false,
+  token: '',
+  id: '',
+  userName: ''
+};
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -40,6 +58,11 @@ app.use(express.static(path.join(__dirname, '/../public')));
  * Api routers
  */
 app.use('/api/v1/users', userRoute);
+
+/**
+ * Sign route
+ */
+app.use('/', signRoute);
 
 /**
  * Basic route
