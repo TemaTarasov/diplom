@@ -1,7 +1,6 @@
 {
-  "port": "",
   "session": {
-    "secret": "",
+    "secret": "Test",
     "cookie": false
   }
 }

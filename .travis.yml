@@ -18,5 +18,7 @@ before_script:
 - ln -s /usr/bin/google-chrome-beta ~/bin/google-chrome
 - export PATH=$HOME/bin:$PATH
 - npm install
+- cp ./server/config/token.example.json ./server/config/token.json
+- cp ./server/config/server.example.json ./server/config/server.json
 script:
 - npm test

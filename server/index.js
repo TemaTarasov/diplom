@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 
 import session from 'express-session';
-import serverConfig from '../server/config/server.json';
+import serverConfig from './config/server.json';
 
 import mongoose from 'mongoose';
 import mongoConfig from './config/mongo.json';

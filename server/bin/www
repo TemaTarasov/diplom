@@ -2,11 +2,10 @@
 
 import app from '../index';
 import http from 'http';
-import serverConfig from '../config/server.json';
 
 const debug = require('debug')('diplom:server');
 
-const port = normalizePort(process.env.PORT || serverConfig.port);
+const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 console.log(`PORT: ${app.get('port')}`);
 

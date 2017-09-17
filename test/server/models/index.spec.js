@@ -74,14 +74,10 @@ describe('Model', () => {
   it('Destory', done => {
     Test.all((err, tests) => {
       expect(tests.length).to.eql(1);
+    });
 
-      Test.destroy(id);
-
-      Test.all((err, tests) => {
-        expect(tests.length).to.eql(0);
-
-        done();
-      });
+    Test.destroy(id, () => {
+      done();
     });
   });
 });
