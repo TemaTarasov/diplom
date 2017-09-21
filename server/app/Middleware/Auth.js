@@ -9,10 +9,35 @@ import tokenConfig from '../../config/token.json';
 
 class Auth {
   /**
+   * @param {Object} user
+   * @param {Function} callback
+   */
+  token(user, callback) {
+    const setup = { id: user._id, login: user.login, email: user.email },
+      token = jwt.sign(setup, tokenConfig.salt, { expiresIn: '1d' });
+
+    if (hash.verify(password, user.password)) {
+      session.auth = {
+        auth: true,
+        token: token,
+        id: user._id,
+        userName: user.login
+      };
+
+      callback({
+        ...user,
+        token: token
+      });
+    } else {
+      callback({ err: 'Access Denied' });
+    }
+  }
+
+  /**
    * @param {Object} { login, email, password }
    * @param {Function} callback
    */
-  attempt({ login, email, password }, callback = () => {}) {
+  attempt({ login, email, password }, callback = () => { }) {
     if (login) {
       User.find({
         login: login
@@ -20,25 +45,7 @@ class Auth {
         if (err) {
           callback({ err: err });
         } else if (user) {
-          const setup = { id: user._id, login: user.login, email: user.email },
-                token = jwt.sign(setup, tokenConfig.salt,  { expiresIn: '1d' });
-
-          if (hash.verify(password, user.password)) {
-            session.auth = {
-              ...session.auth,
-              auth: true,
-              token: token,
-              id: user._id,
-              userName: user.login
-            };
-
-            callback({
-              ...user,
-              token: token
-            });
-          } else {
-            callback({ err: 'Access Denied' });
-          }
+          this.token(user, callback);
         } else {
           callback({ err: 'Access Denied' });
         }
@@ -50,14 +57,7 @@ class Auth {
         if (err) {
           callback({ err: err });
         } else if (user) {
-          const setup = { id: user._id, login: user.login, email: user.email },
-                token = jwt.sign(setup, tokenConfig.salt,  { expiresIn: '1d' });
-
-          if (hash.verify(password, user.password)) {
-            callback({ token: token });
-          } else {
-            callback({ err: 'Access Denied' });
-          }
+          this.token(user, callback);
         } else {
           callback({ err: 'Access Denied' });
         }

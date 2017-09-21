@@ -32,9 +32,9 @@ class UserController extends Controller {
    * @param {Object} res
    */
   signUp({ body }, res) {
-    const login = this.trim(body.login, true);
-    const email = this.trim(body.email, true);
-    const password = this.trim(body.password, true);
+    const login = this.trim(body.login, true),
+      email = this.trim(body.email, true),
+      password = this.trim(body.password, true);
 
     if (this.validate([
       { value: login },
@@ -50,10 +50,9 @@ class UserController extends Controller {
 
         else {
           const setup = { id: user._id, login: user.login, email: user.email },
-                token = jwt.sign(setup, tokenConfig.salt,  { expiresIn: '1d' });
+            token = jwt.sign(setup, tokenConfig.salt, { expiresIn: '1d' });
 
           session.auth = {
-            ...session.auth,
             auth: true,
             token: token,
             id: user._id,
@@ -74,10 +73,10 @@ class UserController extends Controller {
    */
   update(req, res) {
     const id = req.params.id,
-          login = this.trim(req.body.login, true),
-          email = this.trim(req.body.email, true),
-          password = this.trim(req.body.password, true),
-          update = {};
+      login = this.trim(req.body.login, true),
+      email = this.trim(req.body.email, true),
+      password = this.trim(req.body.password, true),
+      update = {};
 
     if (this.validate([{ value: login }])) {
       session.auth.userName = login;
@@ -104,8 +103,8 @@ class UserController extends Controller {
    */
   signIn(req, res) {
     const login = this.trim(req.body.login, true),
-          email = this.trim(req.body.email, true),
-          password = this.trim(req.body.password, true);
+      email = this.trim(req.body.email, true),
+      password = this.trim(req.body.password, true);
 
     if (!this.validate([{ value: password }])) {
       res.json({ err: 'validation error!' });
@@ -114,14 +113,6 @@ class UserController extends Controller {
         Auth.attempt({ login: login, password: password }, user => {
           if (user.err) return res.json(user.err);
 
-          session.auth = {
-            ...session.auth,
-            auth: true,
-            token: user.token,
-            id: user._id,
-            userName: user.login
-          };
-
           res.json({
             token: user.token
           });
@@ -129,14 +120,6 @@ class UserController extends Controller {
       } else if (this.email(email)) {
         Auth.attempt({ email: email, password: password }, user => {
           if (user.err) return res.json(user.err);
-
-          session.auth = {
-            ...session.auth,
-            auth: true,
-            token: user.token,
-            id: user._id,
-            userName: user.login
-          };
 
           res.json({
             token: user.token
