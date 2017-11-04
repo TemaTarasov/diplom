@@ -2,8 +2,8 @@ import mongoose from 'mongoose';
 
 export default class {
   /**
-   * @param  {String} name
-   * @param  {Object} scheme
+   * @param  {string} name
+   * @param  {object} scheme
    * @return {Model}
    */
   createScheme(name, scheme) {
@@ -11,23 +11,23 @@ export default class {
   }
 
   /**
-   * @param {Function} callback
+   * @param {function} callback
    */
   all(callback = () => {}) {
     this.schema.find({}, callback);
   }
 
   /**
-   * @param {Object} condition
-   * @param {Function} callback
+   * @param {object}   condition
+   * @param {function} callback
    */
   find(condition, callback = () => {}) {
     this.schema.findOne(condition, callback);
   }
 
   /**
-   * @param {Object} data
-   * @param {Function} callback
+   * @param {object}   data
+   * @param {function} callback
    */
   new(data, callback = () => {}) {
     const created = new this.schema(data);
@@ -41,17 +41,17 @@ export default class {
   }
 
   /**
-   * @param {Number} id
-   * @param {Object} data
-   * @param {Function} callback
+   * @param {number}   id
+   * @param {object}   data
+   * @param {function} callback
    */
   update(id, data, callback = () => {}) {
     this.schema.findByIdAndUpdate(id, { $set: data }, { upsert: true }, callback);
   }
 
   /**
-   * @param {Number} id
-   * @param {Function} callback
+   * @param {number}   id
+   * @param {function} callback
    */
   destroy(id, callback = () => {}) {
     this.schema.findByIdAndRemove(id, callback);

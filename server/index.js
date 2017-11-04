@@ -39,7 +39,8 @@ session.auth = {
   auth: false,
   token: '',
   id: '',
-  userName: ''
+  userName: '',
+  email: ''
 };
 
 // view engine setup

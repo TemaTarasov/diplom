@@ -9,8 +9,8 @@ import tokenConfig from '../../config/token.json';
 
 class Auth {
   /**
-   * @param {Object} user
-   * @param {Function} callback
+   * @param {object} user
+   * @param {function} callback
    */
   token(user, callback) {
     const setup = { id: user._id, login: user.login, email: user.email },
@@ -34,8 +34,8 @@ class Auth {
   }
 
   /**
-   * @param {Object} { login, email, password }
-   * @param {Function} callback
+   * @param {object} { login, email, password }
+   * @param {function} callback
    */
   attempt({ login, email, password }, callback = () => { }) {
     if (login) {

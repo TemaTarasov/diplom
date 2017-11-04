@@ -16,8 +16,8 @@ class UserController extends Controller {
   }
 
   /**
-   * @param {Object} req
-   * @param {Object} res
+   * @param {object} req
+   * @param {object} res
    */
   index(req, res) {
     User.all((err, users) => {
@@ -28,8 +28,8 @@ class UserController extends Controller {
   }
 
   /**
-   * @param {Object} body
-   * @param {Object} res
+   * @param {object} body
+   * @param {object} res
    */
   signUp({ body }, res) {
     const login = this.trim(body.login, true),
@@ -68,8 +68,8 @@ class UserController extends Controller {
   }
 
   /**
-   * @param {Object} req
-   * @param {Object} res
+   * @param {object} req
+   * @param {object} res
    */
   update(req, res) {
     const id = req.params.id,
@@ -98,8 +98,8 @@ class UserController extends Controller {
   }
 
   /**
-   * @param {Object} req
-   * @param {Object} res
+   * @param {object} req
+   * @param {object} res
    */
   signIn(req, res) {
     const login = this.trim(req.body.login, true),
@@ -132,16 +132,16 @@ class UserController extends Controller {
   }
 
   /**
-   * @param {Object} req
-   * @param {Object} res
+   * @param {object} req
+   * @param {object} res
    */
   signOut(req, res) {
 
   }
 
   /**
-   * @param {Object} params
-   * @param {Object} res
+   * @param {object} params
+   * @param {object} res
    */
   destroy({ params }, res) {
     User.destroy(params.id);

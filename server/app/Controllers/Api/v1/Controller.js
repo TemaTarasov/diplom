@@ -11,14 +11,14 @@ export default class {
 
   /**
    * @param  {string}  value
-   * @param  {boolean} forse
+   * @param  {boolean} force
    * @return {string}
    */
-  trim(value, forse = false) {
+  trim(value, force = false) {
     if (value) {
       const tmp = value.trim().split(' ').filter(x => x !== '');
 
-      return forse ? tmp.join('') : tmp.join(' ');
+      return force ? tmp.join('') : tmp.join(' ');
     }
   }
 
@@ -54,4 +54,4 @@ export default class {
       callback(array[i], i, array);
     }
   }
-}
+};
