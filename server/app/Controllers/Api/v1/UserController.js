@@ -1,14 +1,9 @@
 import Controller from './Controller';
 
-import mongoose from 'mongoose';
-import User from '../../../Models/User';
-
 import hash from 'password-hash';
 
-import jwt from 'jsonwebtoken';
-import tokenConfig from '../../../../config/token.json';
-
-import session from 'express-session';
+import User from '../../../Models/User';
+import Auth from './AuthController';
 
 export default new class extends Controller {
   /**
@@ -18,10 +13,10 @@ export default new class extends Controller {
   index(req, res) {
     User.all((err, users) => {
       if (err) {
-        return res.json(err);
+        res.json(err);
+      } else {
+        res.json(users);
       }
-
-      return res.json(users);
     });
   }
 
@@ -29,32 +24,30 @@ export default new class extends Controller {
    * @param {object} body
    * @param {object} res
    */
-  store({ body }, res) {
-    const login = this.trim(body.login, true),
-      email = this.trim(body.email, true),
-      password = this.trim(body.password, true);
-
-    User.new({
-      login: login,
-      email: email,
-      password: hash.generate(password)
+  store({body}, res) {
+    User.create({
+      login: body.login,
+      email: body.email,
+      password: hash.generate(body.password)
     }, (err, user) => {
       if (err) {
-        return res.json({ err: err.code, msg: err.errmsg });
+        res.json({
+          code: err.code,
+          index: err.index,
+          errmsg: err.errmsg
+        });
+      } else {
+        Auth.attempt({
+          login: user.login,
+          password: body.password
+        }, (err, authUser) => {
+          if (err) {
+            res.json(err);
+          } else {
+            res.json(authUser);
+          }
+        });
       }
-
-      const setup = { id: user._id, login: user.login, email: user.email },
-        token = jwt.sign(setup, tokenConfig.salt, { expiresIn: '1d' });
-
-      session.auth = {
-        auth: true,
-        token: token,
-        id: user._id,
-        userName: user.login,
-        email: user.email
-      };
-
-      return res.json({ token: token });
     });
   }
 
@@ -62,17 +55,20 @@ export default new class extends Controller {
    * @param {object} req
    * @param {object} res
    */
-  show(req, res) { }
+  show(req, res) {
+  }
+
+  /**
+   * @param {object} body
+   * @param {object} res
+   */
+  update({body}, res) {
+  }
 
   /**
    * @param {object} req
    * @param {object} res
    */
-  update(req, res) { }
-
-  /**
-   * @param {object} req
-   * @param {object} res
-   */
-  destroy(req, res) { }
+  destroy(req, res) {
+  }
 }();

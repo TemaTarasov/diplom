@@ -1,7 +1,7 @@
 const webpack = require('webpack'),
-      path = require('path'),
-      env = process.env.NODE_ENV,
-      dev = env === 'development';
+  path = require('path'),
+  env = process.env.NODE_ENV,
+  dev = env === 'development';
 
 module.exports = {
   entry: './client',
@@ -16,35 +16,37 @@ module.exports = {
     aggregateTimeout: 100
   },
 
-  devtool: dev ? '': 'inline-source-map',
+  devtool: dev ? '' : 'inline-source-map',
 
-  plugins: dev ? [
-    new webpack.optimize.ModuleConcatenationPlugin()
-  ]: [
-    new webpack.optimize.ModuleConcatenationPlugin(),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false,
-        drop_console: true,
-        unsafe: true
-      }
-    })
-  ],
+  plugins: dev
+    ? [
+      new webpack.optimize.ModuleConcatenationPlugin()
+    ]
+    : [
+      new webpack.optimize.ModuleConcatenationPlugin(),
+      new webpack.optimize.UglifyJsPlugin({
+        compress: {
+          warnings: false,
+          drop_console: true,
+          unsafe: true
+        }
+      })
+    ],
 
   module: {
     rules: [
       {
         test: /\.js?$/,
-        loader: "babel-loader",
+        loader: 'babel-loader'
       },
       {
         test: /\.css$/,
-        loader: 'style-loader!css-loader',
+        loader: 'style-loader!css-loader'
       },
       {
         test: /\.styl$/,
-        loader: 'style-loader!css-loader!stylus-loader',
+        loader: 'style-loader!css-loader!stylus-loader'
       }
     ]
   }
-}
+};

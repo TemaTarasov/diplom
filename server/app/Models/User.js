@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import Model from './index';
 
-class User extends Model {
+export default new class extends Model {
   constructor() {
     super();
 
@@ -19,6 +19,4 @@ class User extends Model {
       }
     });
   }
-}
-
-export default new User();
+}();

@@ -11,6 +11,8 @@ import serverConfig from './config/server.json';
 import mongoose from 'mongoose';
 import mongoConfig from './config/mongo.json';
 
+import tokenConfig from './config/token.json';
+
 mongoose.connect(`mongodb://127.0.0.1:${mongoConfig.port}/${mongoConfig.db}`, {
   useMongoClient: true
 });
@@ -19,7 +21,6 @@ mongoose.connect(`mongodb://127.0.0.1:${mongoConfig.port}/${mongoConfig.db}`, {
  * Routes
  */
 import mainRoute from './routes';
-import signRoute from './routes/sign';
 
 /**
  * Api routes
@@ -32,15 +33,15 @@ app.use(session({
   secret: serverConfig.session.secret,
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: serverConfig.session.cookie }
+  cookie: {secure: serverConfig.session.cookie}
 }));
 
-session.auth = {
-  auth: false,
-  token: '',
-  id: '',
-  userName: '',
-  email: ''
+session[tokenConfig.header] = {
+  user: {
+    id: null,
+    login: null
+  },
+  token: null
 };
 
 // view engine setup
@@ -51,7 +52,7 @@ app.set('view engine', 'ejs');
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '/../public')));
 
@@ -59,11 +60,6 @@ app.use(express.static(path.join(__dirname, '/../public')));
  * Api routers
  */
 app.use('/api/v1/users', userRoute);
-
-/**
- * Sign route
- */
-app.use('/', signRoute);
 
 /**
  * Basic route

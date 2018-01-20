@@ -14,7 +14,7 @@ export class Header extends Component {
 
     this.state = {
       menu: props.menu || ''
-    }
+    };
 
     this.bindMethods([
       'handleClickMenu'
@@ -34,18 +34,18 @@ export class Header extends Component {
     return (
       <Row type="flex" justify="space-between" gutter={8} className="header">
         <Col>
-          <Icon type="api" className="header-logo" />
+          <Icon type="api" className="header-logo"/>
         </Col>
         <Col>
           <Menu onClick={this.handleClickMenu} selectedKeys={[this.state.menu]} mode="horizontal">
             <Menu.Item key="home">
               <Link to="/">
-                <Icon type="home" /> Главная
+                <Icon type="home"/> Главная
               </Link>
             </Menu.Item>
           </Menu>
         </Col>
       </Row>
-    )
+    );
   }
 }

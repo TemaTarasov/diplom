@@ -13,7 +13,7 @@ export default class {
   /**
    * @param {function} callback
    */
-  all(callback = () => {}) {
+  all(callback = () => { }) {
     this.schema.find({}, callback);
   }
 
@@ -21,7 +21,7 @@ export default class {
    * @param {object}   condition
    * @param {function} callback
    */
-  find(condition, callback = () => {}) {
+  find(condition, callback = () => { }) {
     this.schema.findOne(condition, callback);
   }
 
@@ -29,12 +29,12 @@ export default class {
    * @param {object}   data
    * @param {function} callback
    */
-  new(data, callback = () => {}) {
+  create(data, callback = () => { }) {
     const created = new this.schema(data);
-    const error = created.validateSync();
+    const err = created.validateSync();
 
-    if (error) {
-      callback(error);
+    if (err) {
+      callback(err);
     } else {
       created.save(callback);
     }
@@ -45,7 +45,7 @@ export default class {
    * @param {object}   data
    * @param {function} callback
    */
-  update(id, data, callback = () => {}) {
+  update(id, data, callback = () => { }) {
     this.schema.findByIdAndUpdate(id, { $set: data }, { upsert: true }, callback);
   }
 
@@ -53,7 +53,7 @@ export default class {
    * @param {number}   id
    * @param {function} callback
    */
-  destroy(id, callback = () => {}) {
+  destroy(id, callback = () => { }) {
     this.schema.findByIdAndRemove(id, callback);
   }
 }
