@@ -7,4 +7,5 @@ cp -R ./dist/server/bin ./dist;
 rm -fr ./dist/server;
 cp -R ./server/views ./dist;
 cp -R ./server/config ./dist;
+rm -fr ./dist/config/*.example.json;
 node ./dist/bin/www;
