@@ -58,7 +58,12 @@ export default new class extends Controller {
               }
             });
           } else {
-            res.json(user);
+            res.json({
+              id: user._id,
+              login: user.login,
+              email: user.email,
+              permissions: user.permissions
+            });
           }
         }
       });
