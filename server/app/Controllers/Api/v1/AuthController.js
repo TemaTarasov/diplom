@@ -27,7 +27,8 @@ export default class {
             const authUser = {
               user: {
                 id: user._id,
-                login: user.login
+                login: user.login,
+                permissions: user.permissions
               },
               token: token
             };
@@ -51,7 +52,8 @@ export default class {
             const authUser = {
               user: {
                 id: user._id,
-                login: user.login
+                login: user.login,
+                permissions: user.permissions
               },
               token: token
             };

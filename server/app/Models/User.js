@@ -16,6 +16,9 @@ export default new class extends Model {
       },
       password: {
         type: String
+      },
+      permissions: {
+        type: String
       }
     });
   }

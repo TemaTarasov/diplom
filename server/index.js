@@ -39,7 +39,8 @@ app.use(session({
 session[tokenConfig.header] = {
   user: {
     id: null,
-    login: null
+    login: null,
+    permissions: null
   },
   token: null
 };
