@@ -30,16 +30,31 @@ export default rules => {
         }
       }
 
-      const value = trim(req.body[key], force);
+      const value = req.body[key];
 
       switch (rule.type) {
         case 'email':
-          bool = email(value);
+          bool = email(
+            trim(value, force)
+          );
           message = `The ${key} must be a valid email address.`;
+          break;
+        case 'array':
+          bool = value && typeof value === 'object' && Array.isArray(value);
+          message = `The ${key} must be an array.`;
+          break;
+        case 'object':
+          bool = value && typeof value === 'object';
+          message = `The ${key} must be an object.`;
+          break;
+        case 'number':
+          bool = value && typeof value === 'number';
+          message = `The ${key} must be an object.`;
+          // TODO: validate number
           break;
         case 'string':
         default:
-          bool = req.body[key] && value !== '';
+          bool = value && trim(value, force) !== '';
           message = `The ${key} field is required.`;
 
           if (rule.min && value && value.length <= rule.min) {
@@ -65,9 +80,9 @@ export default rules => {
 
       return acc;
     }, {
-      validate: true,
-      errors: {}
-    });
+        validate: true,
+        errors: {}
+      });
 
     if (result.validate) {
       next();
