@@ -7,7 +7,7 @@ import session from 'express-session';
 import User from '../../../Models/User';
 
 export default class {
-  static attempt(data, callback) {
+  static attempt({ login, email, password }, callback) {
     const trim = value => {
       if (value) {
         return value.trim().split(' ').filter(x => x !== '').join('');
@@ -15,64 +15,33 @@ export default class {
 
       return '';
     };
-    const {login, email, password} = data;
 
-    switch (true) {
-      case trim(email) !== '':
-        User.find({email: email}, (err, user) => {
-          if (err) return callback(err);
+    User.findOne({
+      $or: [
+        { login: trim(login) },
+        { email: trim(email) }
+      ]
+    }, (err, user) => {
+      if (err) return callback(err);
 
-          if (hash.verify(password, user.password)) {
-            const token = jwt.sign({id: user._id, login: user.login}, tokenConfig.salt, {expiresIn: '1d'});
-            const authUser = {
-              user: {
-                id: user._id,
-                login: user.login,
-                permissions: user.permissions
-              },
-              token: token
-            };
+      if (hash.verify(password, user.password)) {
+        const authUser = {
+          user: {
+            id: user._id,
+            login: user.login,
+            permissions: user.permissions
+          },
+          token: jwt.sign({ id: user._id, login: user.login }, tokenConfig.salt, { expiresIn: '1d' })
+        };
 
-            session[tokenConfig.header] = authUser;
+        session[tokenConfig.header] = authUser;
 
-            return callback(null, authUser);
-          }
-
-          return callback({
-            message: 'wrong email or password'
-          });
+        return callback(null, authUser);
+      } else {
+        callback({
+          message: 'Wrong Credentials'
         });
-        break;
-      case trim(login) !== '':
-        User.find({login: login}, (err, user) => {
-          if (err) return callback(err);
-
-          if (hash.verify(password, user.password)) {
-            const token = jwt.sign({id: user._id, login: user.login}, tokenConfig.salt, {expiresIn: '1d'});
-            const authUser = {
-              user: {
-                id: user._id,
-                login: user.login,
-                permissions: user.permissions
-              },
-              token: token
-            };
-
-            session[tokenConfig.header] = authUser;
-
-            return callback(null, authUser);
-          }
-
-          return callback({
-            message: 'wrong login or password'
-          });
-        });
-        break;
-      default:
-        return callback({
-          message: 'empty login or email'
-        });
-        break;
-    }
+      }
+    });
   }
 }

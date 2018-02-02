@@ -18,7 +18,8 @@ export default new class extends Model {
         type: String
       },
       permissions: {
-        type: String
+        type: String,
+        default: 'user'
       }
     });
   }
