@@ -1,15 +1,7 @@
 import Request from '../Request';
 
 export default Request({
-  login: {
-    required: true
-  },
-  email: {
-    type: 'email',
-    required: true
-  },
-  password: {
-    required: true,
-    min: 6
-  }
+  login: 'required',
+  email: 'email|required',
+  password: 'min:6|required'
 });
