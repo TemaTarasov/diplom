@@ -14,9 +14,7 @@ export default new class extends Model {
         type: String,
         unique: true
       },
-      password: {
-        type: String
-      },
+      password: String,
       permissions: {
         type: String,
         default: 'user'

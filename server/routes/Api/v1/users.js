@@ -1,8 +1,8 @@
 import express from 'express';
-import UserController from '../../../app/Controllers/Api/v1/UserController';
+import UserController from '../../../app/Controllers/Api/v1/user.controller';
 
-import UserStoreRequest from '../../../app/Requests/Api/v1/User/UserStoreRequest';
-import UserUpdateRequest from '../../../app/Requests/Api/v1/User/UserUpdateRequest';
+import UserStoreRequest from '../../../app/Requests/Api/v1/User/user.store.request';
+import UserUpdateRequest from '../../../app/Requests/Api/v1/User/user.update.request';
 
 const router = express.Router();
 

@@ -7,7 +7,21 @@ export default class {
    * @return {Model}
    */
   createScheme(name, scheme) {
-    return mongoose.model(name, new mongoose.Schema(scheme));
+    return mongoose.model(name, new mongoose.Schema(
+      {
+        ...scheme,
+        created_at: {
+          type: Date,
+          required: true,
+          default: Date.now
+        },
+        updated_at: {
+          type: Date,
+          required: true,
+          default: Date.now
+        }
+      }
+    ));
   }
 
   /**
@@ -55,7 +69,12 @@ export default class {
    */
   update(condition, data, callback) {
     console.log(data);
-    this.schema.update(condition, { $set: data }, { upsert: true }, callback);
+    this.schema.update(condition, {
+      $set: {
+        ...data,
+        updated_at: Date.now()
+      }
+    }, { upsert: true }, callback);
   }
 
   /**
@@ -64,7 +83,12 @@ export default class {
    * @param {function} callback
    */
   updateById(id, data, callback) {
-    this.schema.findByIdAndUpdate(id, { $set: data }, { upsert: true }, callback);
+    this.schema.findByIdAndUpdate(id, {
+      $set: {
+        ...data,
+        updated_at: Date.now()
+      }
+    }, { upsert: true }, callback);
   }
 
   /**

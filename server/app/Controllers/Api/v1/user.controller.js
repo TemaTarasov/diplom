@@ -1,14 +1,14 @@
-import Controller from './Controller';
+import Controller from './controller';
 
 import hash from 'password-hash';
 
-import User from '../../../Models/User';
-import Auth from './AuthController';
+import User from '../../../Models/user.model';
+import Auth from './auth.controller';
 
 import tokenConfig from '../../../../config/token.json';
 import session from 'express-session';
 
-import mongoose from 'mongoose';
+import { isObjectId } from '../../../../utils/string.utils';
 
 export default new class extends Controller {
   /**
@@ -18,10 +18,10 @@ export default new class extends Controller {
   index(req, res) {
     User.all((err, users) => {
       if (err) {
-        res.json(err);
-      } else {
-        res.json(users);
+        return res.json(err);
       }
+
+      return res.json(users);
     });
   }
 
@@ -42,32 +42,32 @@ export default new class extends Controller {
         : 'user'
     }, (err, user) => {
       if (err) {
-        res.json({
+        return res.json({
           code: err.code,
           index: err.index,
           errmsg: err.errmsg
         });
-      } else {
-        if (!sessionUser.id && !sessionUser.login) {
-          Auth.attempt({
-            login: user.login,
-            password: body.password
-          }, (err, authUser) => {
-            if (err) {
-              res.json(err);
-            } else {
-              res.json(authUser);
-            }
-          });
-        } else {
-          res.json({
-            id: user._id,
-            login: user.login,
-            email: user.email,
-            permissions: user.permissions
-          });
-        }
       }
+
+      if (!sessionUser.id && !sessionUser.login) {
+        return Auth.attempt({
+          login: user.login,
+          password: body.password
+        }, (err, authUser) => {
+          if (err) {
+            return res.json(err);
+          }
+
+          return res.json(authUser);
+        });
+      }
+
+      return res.json({
+        id: user._id,
+        login: user.login,
+        email: user.email,
+        permissions: user.permissions
+      });
     });
   }
 
@@ -77,9 +77,7 @@ export default new class extends Controller {
    */
   show({ params }, res) {
     const { user } = params;
-    const id = mongoose.Types.ObjectId.isValid(user)
-      ? user
-      : mongoose.mongo.ObjectId("000000000000000000000000");
+    const id = isObjectId(user);
 
     User.findOne({
       $or: [
@@ -88,10 +86,10 @@ export default new class extends Controller {
       ]
     }, (err, user) => {
       if (err) {
-        res.json(err);
-      } else {
-        res.json(user);
+        return res.json(err);
       }
+
+      return res.json(user);
     });
   }
 
@@ -103,9 +101,7 @@ export default new class extends Controller {
     const sessionUser = session[tokenConfig.header].user;
 
     const { user } = req.params;
-    const id = mongoose.Types.ObjectId.isValid(user)
-      ? user
-      : mongoose.mongo.ObjectId("000000000000000000000000");
+    const id = isObjectId(user);
 
     const updateData = Object.keys(req.body).reduce((acc, key) => {
       const item = req.body[key];
@@ -128,10 +124,10 @@ export default new class extends Controller {
       ]
     }, updateData, (err, data) => {
       if (err) {
-        res.json(err);
-      } else {
-        res.json(data);
+        return res.json(err);
       }
+
+      return res.json(data);
     });
   }
 

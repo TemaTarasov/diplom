@@ -1,3 +1,6 @@
+import { trim } from '../../../../utils/string.utils';
+import { email } from '../../../../validators';
+
 const err = {
   'array': 'The :attribute must be an array.',
   'email': 'The :attribute must be a valid email address.',
@@ -14,14 +17,6 @@ const err = {
   'number': 'The :attribute must be a number.',
   'required': 'The :attribute field is required.',
   'object': 'The :attribute must be an object.',
-};
-
-const trim = value => value ? value.trim().split(' ').filter(x => x !== '').join(' ') : '';
-
-const email = email => {
-  const regexp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-  return regexp.test(email);
 };
 
 const getType = value => {

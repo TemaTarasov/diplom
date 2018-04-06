@@ -4,18 +4,12 @@ import tokenConfig from '../../../../config/token.json';
 import hash from 'password-hash';
 import session from 'express-session';
 
-import User from '../../../Models/User';
+import User from '../../../Models/user.model';
+
+import { trim } from '../../../../utils/string.utils';
 
 export default class {
   static attempt({ login, email, password }, callback) {
-    const trim = value => {
-      if (value) {
-        return value.trim().split(' ').filter(x => x !== '').join('');
-      }
-
-      return '';
-    };
-
     User.findOne({
       $or: [
         { login: trim(login) },

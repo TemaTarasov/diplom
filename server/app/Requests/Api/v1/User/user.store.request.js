@@ -1,4 +1,4 @@
-import Request from '../Request';
+import Request from '../request';
 
 export default Request({
   login: 'required',
