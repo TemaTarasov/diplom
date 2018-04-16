@@ -10,7 +10,8 @@ export default new class extends Model {
         type: String,
         unique: true
       },
-      description: String
+      description: String,
+      image: String
     });
   }
 }();

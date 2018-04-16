@@ -9,7 +9,7 @@ export default class extends React.Component {
   }
 
   /**
-   * @param {array} array
+   * @param {array}    array
    * @param {function} callback
    */
   foreach(array, callback) {

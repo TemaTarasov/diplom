@@ -12,21 +12,18 @@ export class Header extends Component {
   constructor(props) {
     super(props);
 
+    debugger;
     this.state = {
-      menu: props.menu || ''
+      menu: 'home'
     };
-
-    this.bindMethods([
-      'handleClickMenu'
-    ]);
   }
 
   /**
-   * @param {Event} event
+   * @param {event} e
    */
-  handleClickMenu(event) {
+  handleClickMenu = e => {
     this.setState({
-      menu: event.key
+      menu: e.key
     });
   }
 
