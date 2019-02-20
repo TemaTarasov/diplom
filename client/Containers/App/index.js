@@ -13,10 +13,13 @@ export class App extends Component {
     return (
       <div>
         <Header />
-
         <Router>
           <Switch>
-            <Route location={this.props.location} exact path="/" component={Home} />
+            <Route path="/auth" component={Home} />
+            <Route path="/sing-in" component={Home} />
+            <Route path="/sing-up" component={Home} />
+
+            <Route component={NotFound} />
           </Switch>
         </Router>
       </div>

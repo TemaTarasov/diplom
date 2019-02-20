@@ -6,7 +6,7 @@ import session from 'express-session';
 
 import User from '../../../Models/user.model';
 
-import { trim } from '../../../../utils/string.utils';
+import { trim } from '../../../../utils/helper';
 
 export default class {
   static attempt({ login, email, password }, callback) {

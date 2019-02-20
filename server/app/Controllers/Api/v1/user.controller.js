@@ -8,7 +8,7 @@ import Auth from './auth.controller';
 import tokenConfig from '../../../../config/token.json';
 import session from 'express-session';
 
-import { isObjectId } from '../../../../utils/string.utils';
+import { isObjectId } from '../../../../utils/helper';
 
 export default new class extends Controller {
   /**

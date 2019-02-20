@@ -1,5 +1,4 @@
-import { trim } from '../../../../utils/string.utils';
-import { email } from '../../../../validators';
+import { trim, isEmpty, isArray, isEmail, isObject } from '../../../../utils/helper';
 
 const err = {
   'array': 'The :attribute must be an array.',
@@ -19,105 +18,79 @@ const err = {
   'object': 'The :attribute must be an object.',
 };
 
-const getType = value => {
-  return value === 'number' ||
-    value === 'email' ||
-    value === 'array' ||
-    value === 'object' ? value : 'string';
-};
-
-const parseRule = rule => {
+function parseRule(rule) {
   return rule.split('|').reduce((acc, item) => {
-    const tmp = item.split(':');
+    const [key, value] = item.split(':');
 
-    if (tmp.length === 1) {
-      if (tmp[0] === 'required') {
-        acc.required = true;
+    if (key === 'required') {
+      acc.required = true;
+
+      return acc;
+    }
+
+    if (!isEmpty(value)) {
+      const _value = Number(value);
+
+      if (isNaN(_value)) {
+        throw new TypeError('Wrong syntax for validation min or max! Please use next syntax min:NUMBER or max:NUMBER OR min:NUMBER:max:NUMBER')
       }
 
-      if (acc.type === 'string') {
-        acc.type = getType(tmp[0]);
-      }
-    } else {
-      for (let i = 0; i < tmp.length; i++) {
-        const argument = tmp[i];
+      acc[key] = _value;
 
-        if (acc.type === 'string') {
-          acc.type = getType(argument);
-        }
+      return acc;
+    }
 
-        if (
-          argument === 'min' ||
-          argument === 'max'
-        ) {
-          if (
-            isNaN(Number(tmp[i + 1]))
-          ) {
-            throw new Error('Wrong syntax for validation min or max! Please use next syntax min:NUMBER or max:NUMBER OR min:NUMBER:max:NUMBER')
-          }
-          acc[argument] = Number(tmp[i + 1]);
+    if (['number', 'email', 'array', 'object'].includes(key)) {
+      acc.type = key;
 
-          delete tmp[i + 1];
-          i++;
-        }
-      }
+      return acc;
     }
 
     return acc;
   }, {
       type: 'string',
       required: false,
-      min: void 0,
-      max: void 0
+      min: null,
+      max: null
     });
-};
+}
 
-const validate = (value, rule, acc, key) => {
-  const result = parseRule(rule);
+function validate(value, rule, acc, key) {
+  const rules = parseRule(rule);
 
-  if (!result.required) {
-    if (
-      value === null ||
-      typeof value === 'undefined' ||
-      trim(value) === ''
-    ) {
-      return acc;
-    }
-  } else {
-    if (
-      value === null ||
-      typeof value === 'undefined' ||
-      trim(value) === '' ||
-      !Boolean(value.length)
-    ) {
+  if (rules.required) {
+    if (isEmpty(trim(value))) {
       acc.validate = false;
+
       acc.errors[key] = acc.errors[key] || [];
       acc.errors[key].push(
         err.required.replace(':attribute', key)
       );
     }
+  } else if (isEmpty(trim(value))) {
+    return acc;
   }
 
-  switch (true) {
-    case result.type === 'array':
-      if (!Array.isArray(value)) {
+  switch (rules.type) {
+    case 'array':
+      if (isArray(value)) {
         acc.validate = false;
         acc.errors[key] = acc.errors[key] || [];
         acc.errors[key].push(
-          err[result.type].replace(':attribute', key)
+          err[rules.type].replace(':attribute', key)
         );
       }
       break;
-    case result.type === 'object':
-      if (typeof value !== 'object') {
+    case 'object':
+      if (isObject(value)) {
         acc.validate = false;
         acc.errors[key] = acc.errors[key] || [];
         acc.errors[key].push(
-          err[result.type].replace(':attribute', key)
+          err[rules.type].replace(':attribute', key)
         );
       }
       break;
-    case result.type === 'number':
+    case 'number':
       if (
         typeof value === 'number' &&
         !isNaN(value)
@@ -125,18 +98,16 @@ const validate = (value, rule, acc, key) => {
         acc.validate = false;
         acc.errors[key] = acc.errors[key] || [];
         acc.errors[key].push(
-          err[result.type].replace(':attribute', key)
+          err[rules.type].replace(':attribute', key)
         );
       }
       break;
-    case result.type === 'email':
-      if (!email(
-        trim(value)
-      )) {
+    case 'email':
+      if (!isEmail(trim(value, true))) {
         acc.validate = false;
         acc.errors[key] = acc.errors[key] || [];
         acc.errors[key].push(
-          err[result.type].replace(':attribute', key)
+          err[rules.type].replace(':attribute', key)
         );
       }
       break;
@@ -144,62 +115,32 @@ const validate = (value, rule, acc, key) => {
       break;
   }
 
-  if (
-    result.min &&
-    typeof value !== 'undefined'
-  ) {
-    switch (true) {
-      case result.type === 'number':
-        if (value < result.min) {
-          acc.validate = false;
-          acc.errors[key] = acc.errors[key] || [];
-          acc.errors[key].push(
-            err.min[result.type].replace(':attribute', key).replace(':min', result.min)
-          );
-        }
-        break;
-      case result.type === 'array':
-      default:
-        if (value.length < result.min) {
-          acc.validate = false;
-          acc.errors[key] = acc.errors[key] || [];
-          acc.errors[key].push(
-            err.min[result.type].replace(':attribute', key).replace(':min', result.min)
-          );
-        }
-        break;
-    }
-  }
+  if ((rules.max || rules.min) && ['number', 'array'].includes(rules.type)) {
+    const _value = rules.type === 'number' ? value : value.length;
 
-  if (
-    result.max &&
-    typeof value !== 'undefined'
-  ) {
-    switch (true) {
-      case result.type === 'number':
-        if (value > result.max) {
-          acc.validate = false;
-          acc.errors[key] = acc.errors[key] || [];
-          acc.errors[key].push(
-            err.max[result.type].replace(':attribute', key).replace(':max', result.max)
-          );
-        }
-        break;
-      case result.type === 'array':
-      default:
-        if (value.length > result.max) {
-          acc.validate = false;
-          acc.errors[key] = acc.errors[key] || [];
-          acc.errors[key].push(
-            err.max[result.type].replace(':attribute', key).replace(':max', result.max)
-          );
-        }
-        break;
+    if (rules.max) {
+      if (_value < rules.max) {
+        acc.validate = false;
+        acc.errors[key] = acc.errors[key] || [];
+        acc.errors[key].push(
+          err.max[rules.type].replace(':attribute', key).replace(':max', rules.max)
+        );
+      }
+    }
+
+    if (rules.min) {
+      if (_value > rules.min) {
+        acc.validate = false;
+        acc.errors[key] = acc.errors[key] || [];
+        acc.errors[key].push(
+          err.min[rules.type].replace(':attribute', key).replace(':min', rules.min)
+        );
+      }
     }
   }
 
   return acc;
-};
+}
 
 export default rules => {
   return ({ body }, res, next) => {

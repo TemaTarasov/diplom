@@ -14,7 +14,6 @@ export default class extends React.Component {
           <Route path="/dashboard" component={Dashboard} />
           <Route path="/" component={App} />
 
-          <Route component={NotFound} />
         </Switch>
       </Router>
     );
