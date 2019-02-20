@@ -73,7 +73,7 @@ function validate(value, rule, acc, key) {
 
   switch (rules.type) {
     case 'array':
-      if (isArray(value)) {
+      if (!isArray(value)) {
         acc.validate = false;
         acc.errors[key] = acc.errors[key] || [];
         acc.errors[key].push(
@@ -82,7 +82,7 @@ function validate(value, rule, acc, key) {
       }
       break;
     case 'object':
-      if (isObject(value)) {
+      if (!isObject(value)) {
         acc.validate = false;
         acc.errors[key] = acc.errors[key] || [];
         acc.errors[key].push(
